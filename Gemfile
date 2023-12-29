@@ -17,8 +17,8 @@ source "https://rubygems.org"
 group :jekyll_plugins do
   gem "jekyll-feed", "~> 0.12"
   gem "github-pages"
-  gem "jekyll-remote-theme"
 end
+  gem "jekyll-remote-theme"
 
 gem "webrick", "~> 1.7"
 
