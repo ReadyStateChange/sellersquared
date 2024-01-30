@@ -26,4 +26,4 @@ Contact me now! Share your business details, current challenges with Square and 
 
 Don't let software limitations hold you back. Reach out today and take the first step towards a seamless, customized solution designed just for you!
 
-### [Contact Me](mailto:emmanuel@readystatechange.com?subject=Square%20Custom%20Software%20Solutions){:target="_blank"}
+### [Contact Me Now!](mailto:emmanuel@readystatechange.com?subject=Square%20Custom%20Software%20Solutions){:target="_blank"}
