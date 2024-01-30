@@ -14,11 +14,11 @@ source "https://rubygems.org"
 # uncomment the line below. To upgrade, run `bundle update github-pages`.
 # gem "github-pages", group: :jekyll_plugins
 # If you have any plugins, put them here!
+gem "eventmachine", "~> 1.2.7"
 group :jekyll_plugins do
   gem "jekyll-feed", "~> 0.12"
   gem "github-pages"
 end
-  gem "jekyll-remote-theme"
 
 gem "webrick", "~> 1.7"
 
