@@ -15,8 +15,8 @@ Are you a Square seller tried of wresting with software limitations? We understa
 We focus solely on Square sellers and provide bespoke software solutions that make Square work for you instead of you working for Square.
 
 
-### Testimonial
-Created a web app that automated customer service at a wine shop.  A cutting edge AI Sommelier that helps customers find the perfect wine for their taste and budget.  The app was built using Square's API. [Checkout Sommel'Yay](https://app.mysommelyay.com/shop_location/1/sommelier/kiosk){:target="_blank"}.
+### We helped Liquid Assets efficiently handle their peak hours without adding headcount
+A cutting edge AI Sommelier that helps customers find the perfect wine for their taste and budget.  The app was built using Square's API and made sure to only offer wines that are in stock at a specific location. [Checkout Sommel'Yay](https://app.mysommelyay.com/shop_location/1/sommelier/kiosk){:target="_blank"}.
 
 > Emmanuel is thorough, responsive and easy to work with. He's organized and I appreciated his weekly catch up calls to ensure no one's time was wasted, and that we were always on the same page.  He proved to be a significant upgrade from the prior software developer we asked to build the web app. If our app finds an audience, we'll certainly ask him to work on version 2.0.
 > - Nigel, [Liquid Assets](https://liquidassetsbk.com/){:target="_blank"}
