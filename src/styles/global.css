@@ -1,0 +1,57 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --font-sans: "Inter", sans-serif;
+  --font-display: "Gilda Display", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  /* Colors */
+  --color-blue-50: #ebebff;
+  --color-blue-100: #d2d2fe;
+  --color-blue-200: #a6a4fe;
+  --color-blue-300: #7e7cfd;
+  --color-blue-400: #524ffd;
+  --color-blue-500: #2522fc;
+  --color-blue-600: #0703e2;
+  --color-blue-700: #0502ab;
+  --color-blue-800: #03026f;
+  --color-blue-900: #020137;
+  --color-blue-950: #01001e;
+}
+.font-display {
+   font-family: var(--font-display);
+}
+.font-sans {
+  font-family: var(--font-sans);
+}
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* CSS */
+:root {
+  font-family: Inter, sans-serif;
+}
+@supports (font-variation-settings: normal) {
+  /* Use variable font if supported */
+  :root {
+    font-family: InterVariable, sans-serif;
+  }
+}
+
+:root {
+  --astro-code-color-text: #000000;
+  --astro-code-background: #f5f5f5;
+  --astro-code-token-constant: #00000080;
+  --astro-code-token-string: #00000050;
+  --astro-code-token-comment: #00000060;
+  --astro-code-token-keyword: black;
+  --astro-code-token-parameter: #ffffff;
+  --astro-code-token-function: black;
+  --astro-code-token-string-expression: #2522fc;
+  --astro-code-token-punctuation: #ffffff;
+  --astro-code-token-link: #ffffff;
+}
+
+
