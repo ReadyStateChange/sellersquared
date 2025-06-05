@@ -64,7 +64,6 @@
         "pubDate",
         "description",
         "author",
-        "image",
         "tags"
       ],
       "additionalProperties": false

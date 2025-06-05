@@ -48,7 +48,7 @@ const { posts } = Astro.props;
               alt={post.data.title}
               pubDate={post.data.pubDate.toString().slice(0, 10)}
               author={post.data.author}
-              image={post.data.image.url}
+              image={post.data.image?.url}
               tags={post.data.tags}
             />
           ))
