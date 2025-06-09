@@ -1,3 +1,8 @@
+---
+import { Image } from 'astro:assets';
+import sellerSquaredImage from '../../assets/images/SellerSquared.svg';
+---
+
 <div
   class=" "
 
@@ -11,11 +16,13 @@
         class="flex flex-row items-center justify-between md:justify-start"
       >
         <a
-          class="text-black hover:text-zinc-500 items-center font-normal uppercase gap-3 inline-flex "
+          class="items-center inline-flex transition-opacity rounded-lg hover:bg-black/20"
           href="/"
         >
-
-         readystatechange
+          <Image
+            src={sellerSquaredImage}
+            alt="SellerSquared Logo"
+            class="max-h-9 w-auto"
         </a>
         <button
           @click="open = !open"
