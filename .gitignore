@@ -33,3 +33,5 @@ pnpm-debug.log*
 *.swp
 *.tmp
 Thumbs.db.astro/
+
+.astro/*
