@@ -16,13 +16,13 @@ import sellerSquaredImage from '../../assets/images/SellerSquared.svg';
         class="flex flex-row items-center justify-between md:justify-start"
       >
         <a
-          class="items-center inline-flex transition-opacity rounded-lg hover:bg-black/20"
+          class="items-center inline-flex transition-transform duration-300 ease-in-out hover:scale-105 rounded-lg"
           href="/"
         >
           <Image
             src={sellerSquaredImage}
             alt="SellerSquared Logo"
-            class="max-h-9 w-auto"
+            class="max-h-9 w-auto transition-opacity duration-300 hover:opacity-90"
         </a>
         <button
           @click="open = !open"
