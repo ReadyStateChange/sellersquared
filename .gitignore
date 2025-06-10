@@ -32,6 +32,6 @@ pnpm-debug.log*
 # Temporary/system files
 *.swp
 *.tmp
-Thumbs.db.astro/
+Thumbs.db
 
-.astro/*
+.astro/
