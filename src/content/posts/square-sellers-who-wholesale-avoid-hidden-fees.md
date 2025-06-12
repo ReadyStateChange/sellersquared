@@ -46,7 +46,7 @@ High-end boutique brands have figured this out. They use clean, well-organized p
 ![Uncrate Stockists Page](../../assets/images/Uncrate-Stockists.png)
 
 
-**Akua Objects** demonstrates scale with their [stockists page](https://akuaobjects.com/en-us/blogs/campaign/stockists) featuring over 40 retailers broken up by r Even with this many partners, the simple list format remains more useful than a crowded map interface. Customers can quickly scan for familiar store names or cities without waiting for map tiles to load.
+**Akua Objects** demonstrates scale with their [stockists page](https://akuaobjects.com/en-us/blogs/campaign/stockists) featuring over 40 retailers broken up by region. Even with this many partners, the simple list format remains more useful than a crowded map interface. Customers can quickly scan for familiar store names or cities without waiting for map tiles to load.
 ![Akua Objects Stockists](../../assets/images/Akua-Objects-Stockists.png)
 
 The pattern across successful brands is clear: provide essential information in a scannable format. Store name, location, and contact details. Nothing more complex than necessary.
