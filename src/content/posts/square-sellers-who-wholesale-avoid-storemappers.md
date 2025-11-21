@@ -1,6 +1,6 @@
 ---
 pubDate: 2025-06-06
-author: SellerSquared
+author: Emmanuel
 title: "How to Avoid the Hidden Fees of Store Mapping Services"
 description: "Square sellers who wholesale can save money and stress with a simple retailer page. It will avoid the hidden fees of store mapping services."
 tags: [

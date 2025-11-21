@@ -19,12 +19,15 @@
   --color-blue-900: #020137;
   --color-blue-950: #01001e;
 }
+
 .font-display {
-   font-family: var(--font-display);
+  font-family: var(--font-display);
 }
+
 .font-sans {
   font-family: var(--font-sans);
 }
+
 .font-mono {
   font-family: var(--font-mono);
 }
@@ -32,8 +35,11 @@
 /* CSS */
 :root {
   font-family: Inter, sans-serif;
+  font-size: 20px;
 }
+
 @supports (font-variation-settings: normal) {
+
   /* Use variable font if supported */
   :root {
     font-family: InterVariable, sans-serif;
@@ -53,5 +59,3 @@
   --astro-code-token-punctuation: #ffffff;
   --astro-code-token-link: #ffffff;
 }
-
-
