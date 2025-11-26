@@ -16,7 +16,7 @@
     "@astrolib/seo": "^1.0.0-beta.5",
     "@tailwindcss/forms": "^0.5.9",
     "@tailwindcss/typography": "^0.5.15",
-    "astro": "^5.13.9"
+    "astro": "^5.16.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.0-beta.9",
