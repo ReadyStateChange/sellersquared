@@ -58,7 +58,7 @@ const {
       const submitText = this.dataset.submitText || "Send";
 
       this.innerHTML = `
-        <button type="button" class="interest-trigger underline hover:no-underline cursor-pointer transition-colors">
+        <button type="button" class="interest-trigger">
           ${buttonText}
         </button>
         <div class="interest-popover">
@@ -228,6 +228,13 @@ const {
     background: none;
     border: none;
     padding: 0;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: text-decoration 0.15s;
+  }
+
+  .interest-trigger:hover {
+    text-decoration: none;
   }
 
   .interest-trigger.active {
