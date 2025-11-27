@@ -1,4 +1,4 @@
-import { GmailService, verifyTransporter } from "./email/gmail";
+import { ActiveEmailService, verifyResend } from "./email/index";
 
 // Simple in-memory rate limiting
 const rateLimitMap = new Map<string, number[]>();
@@ -43,24 +43,20 @@ const server = Bun.serve({
     if (url.pathname === "/health") {
       return Response.json({
         status: "ok",
-        gmailConfigured: !!(
-          process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD
-        ),
+        resendConfigured: !!process.env.RESEND_API_KEY,
         timestamp: new Date().toISOString(),
       });
     }
 
-    // Simple config check (no SMTP connection)
+    // Simple config check
     if (url.pathname === "/debug/config") {
-      const gmailUser = process.env.GMAIL_USER;
-      const gmailPass = process.env.GMAIL_APP_PASSWORD;
+      const apiKey = process.env.RESEND_API_KEY;
+      const fromEmail = process.env.RESEND_FROM_EMAIL;
       return Response.json({
         status: "ok",
-        gmail: {
-          user: gmailUser
-            ? `${gmailUser.slice(0, 3)}***@${gmailUser.split("@")[1] || "?"}`
-            : "NOT SET",
-          pass: gmailPass ? `SET (${gmailPass.length} chars)` : "NOT SET",
+        resend: {
+          apiKey: apiKey ? `${apiKey.slice(0, 6)}***` : "NOT SET",
+          fromEmail: fromEmail || "onboarding@resend.dev (default)",
         },
         env: process.env.NODE_ENV || "not set",
         timestamp: new Date().toISOString(),
@@ -71,24 +67,23 @@ const server = Bun.serve({
     if (url.pathname === "/debug/email" && req.method === "GET") {
       console.log("[Debug] /debug/email called");
       try {
-        const result = await verifyTransporter();
-        console.log("[Debug] verifyTransporter result:", result);
+        const result = await verifyResend();
+        console.log("[Debug] verifyResend result:", result);
         return Response.json({
           status: result.verified ? "ok" : "config_error",
           message: result.verified
-            ? "SMTP connection verified"
+            ? "Resend API connection verified"
             : "Configuration issue",
           ...result,
         });
       } catch (err) {
         const e = err as any;
-        console.error("[Debug] verifyTransporter error:", e);
+        console.error("[Debug] verifyResend error:", e);
         return Response.json(
           {
             status: "error",
             errorName: e?.name,
             errorMessage: e?.message,
-            errorCode: e?.code,
           },
           { status: 500 }
         );
@@ -140,8 +135,8 @@ const server = Bun.serve({
         );
 
         // Don't await - let it run in background
-        GmailService.send({
-          to: process.env.GMAIL_USER!,
+        ActiveEmailService.send({
+          to: process.env.NOTIFICATION_EMAIL || process.env.RESEND_FROM_EMAIL!,
           subject: `[SellerSquared] Interest from ${name}`,
           text: `Name: ${name}\nEmail: ${email}\nMessage: ${message || "N/A"}`,
           html: `
