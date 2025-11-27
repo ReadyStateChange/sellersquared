@@ -1,0 +1,387 @@
+---
+interface Props {
+  buttonText?: string;
+  nameLabel?: string;
+  namePlaceholder?: string;
+  emailLabel?: string;
+  emailPlaceholder?: string;
+  messageLabel?: string;
+  messagePlaceholder?: string;
+  submitText?: string;
+}
+
+const {
+  buttonText = "Let me know",
+  nameLabel = "Name",
+  namePlaceholder = "Your name",
+  emailLabel = "Email",
+  emailPlaceholder = "your@email.com",
+  messageLabel = "Message",
+  messagePlaceholder = "What's on your mind?",
+  submitText = "Send",
+} = Astro.props;
+---
+
+<interest-form
+  data-button-text={buttonText}
+  data-name-label={nameLabel}
+  data-name-placeholder={namePlaceholder}
+  data-email-label={emailLabel}
+  data-email-placeholder={emailPlaceholder}
+  data-message-label={messageLabel}
+  data-message-placeholder={messagePlaceholder}
+  data-submit-text={submitText}></interest-form>
+
+<script>
+  class InterestFormElement extends HTMLElement {
+    private isOpen = false;
+    private triggerEl: HTMLButtonElement | null = null;
+    private popoverEl: HTMLElement | null = null;
+    private formEl: HTMLFormElement | null = null;
+    private successEl: HTMLElement | null = null;
+
+    connectedCallback() {
+      this.render();
+      this.setupEvents();
+    }
+
+    render() {
+      const buttonText = this.dataset.buttonText || "Let me know";
+      const nameLabel = this.dataset.nameLabel || "Name";
+      const namePlaceholder = this.dataset.namePlaceholder || "Your name";
+      const emailLabel = this.dataset.emailLabel || "Email";
+      const emailPlaceholder =
+        this.dataset.emailPlaceholder || "your@email.com";
+      const messageLabel = this.dataset.messageLabel || "Message";
+      const messagePlaceholder =
+        this.dataset.messagePlaceholder || "What's on your mind?";
+      const submitText = this.dataset.submitText || "Send";
+
+      this.innerHTML = `
+        <button type="button" class="interest-trigger underline hover:no-underline cursor-pointer transition-colors">
+          ${buttonText}
+        </button>
+        <div class="interest-popover">
+          <div class="interest-popover-arrow"></div>
+          <form class="interest-form">
+            <button type="button" class="interest-close" aria-label="Close form">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+            <div class="interest-field">
+              <label>${nameLabel}</label>
+              <input type="text" name="name" placeholder="${namePlaceholder}" required />
+            </div>
+            <div class="interest-field">
+              <label>${emailLabel}</label>
+              <input type="email" name="email" placeholder="${emailPlaceholder}" required />
+            </div>
+            <div class="interest-field">
+              <label>${messageLabel}</label>
+              <textarea name="message" placeholder="${messagePlaceholder}" rows="2"></textarea>
+            </div>
+            <button type="submit" class="interest-submit">${submitText}</button>
+          </form>
+          <div class="interest-success">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Thanks! I'll be in touch soon.</span>
+          </div>
+        </div>
+      `;
+
+      this.triggerEl = this.querySelector(".interest-trigger");
+      this.popoverEl = this.querySelector(".interest-popover");
+      this.formEl = this.querySelector(".interest-form");
+      this.successEl = this.querySelector(".interest-success");
+    }
+
+    setupEvents() {
+      const closeBtn = this.querySelector(".interest-close");
+
+      this.triggerEl?.addEventListener("click", () => {
+        this.toggleForm();
+      });
+
+      closeBtn?.addEventListener("click", () => {
+        this.closeForm();
+      });
+
+      this.formEl?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        this.handleSubmit();
+      });
+
+      // Close on click outside
+      document.addEventListener("click", (e) => {
+        if (this.isOpen && !this.contains(e.target as Node)) {
+          this.closeForm();
+        }
+      });
+
+      // Close on escape
+      document.addEventListener("keydown", (e) => {
+        if (this.isOpen && e.key === "Escape") {
+          this.closeForm();
+        }
+      });
+    }
+
+    toggleForm() {
+      if (this.isOpen) {
+        this.closeForm();
+      } else {
+        this.openForm();
+      }
+    }
+
+    openForm() {
+      if (!this.triggerEl || !this.popoverEl) return;
+
+      this.popoverEl.classList.add("open");
+      this.triggerEl.classList.add("active");
+
+      const firstInput = this.formEl?.querySelector<HTMLInputElement>("input");
+      setTimeout(() => firstInput?.focus(), 100);
+
+      this.isOpen = true;
+    }
+
+    closeForm() {
+      if (!this.triggerEl || !this.popoverEl || !this.formEl || !this.successEl)
+        return;
+
+      this.popoverEl.classList.remove("open");
+      this.triggerEl.classList.remove("active");
+
+      setTimeout(() => {
+        if (this.formEl && this.successEl) {
+          this.formEl.reset();
+          this.formEl.style.display = "";
+          this.successEl.style.display = "";
+        }
+      }, 200);
+
+      this.isOpen = false;
+    }
+
+    async handleSubmit() {
+      if (!this.formEl || !this.successEl) return;
+
+      const submitBtn =
+        this.formEl.querySelector<HTMLButtonElement>(".interest-submit");
+      const originalText = submitBtn?.textContent || "Send";
+
+      // Loading state
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Sending...";
+      }
+
+      const formData = new FormData(this.formEl);
+      const data = Object.fromEntries(formData);
+
+      try {
+        const res = await fetch(
+          "https://your-railway-app.up.railway.app/submit",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          }
+        );
+
+        if (!res.ok) throw new Error("Failed to submit");
+
+        this.formEl.style.display = "none";
+        this.successEl.style.display = "flex";
+
+        setTimeout(() => this.closeForm(), 2500);
+      } catch (err) {
+        console.error("Submit error:", err);
+        // Show error state
+        if (submitBtn) {
+          submitBtn.textContent = "Error - Try Again";
+          submitBtn.disabled = false;
+          setTimeout(() => {
+            submitBtn.textContent = originalText;
+          }, 2000);
+        }
+      }
+    }
+  }
+
+  if (!customElements.get("interest-form")) {
+    customElements.define("interest-form", InterestFormElement);
+  }
+</script>
+
+<style is:global>
+  interest-form {
+    position: relative;
+    display: inline;
+  }
+
+  .interest-trigger {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  .interest-trigger.active {
+    color: #000;
+    text-decoration: none;
+  }
+
+  .interest-popover {
+    position: absolute;
+    left: 50%;
+    top: calc(100% + 12px);
+    transform: translateX(-50%) translateY(-8px);
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 16px;
+    width: 280px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.2s,
+      transform 0.2s,
+      visibility 0.2s;
+    z-index: 100;
+  }
+
+  .interest-popover.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .interest-popover-arrow {
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    border-left: 1px solid #e5e5e5;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  .interest-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .interest-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px;
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    border-radius: 4px;
+    transition:
+      color 0.15s,
+      background 0.15s;
+  }
+
+  .interest-close:hover {
+    color: #000;
+    background: #f5f5f5;
+  }
+
+  .interest-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .interest-field label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #666;
+  }
+
+  .interest-field input,
+  .interest-field textarea {
+    padding: 8px 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    transition: border-color 0.15s;
+    font-family: inherit;
+  }
+
+  .interest-field input:focus,
+  .interest-field textarea:focus {
+    outline: none;
+    border-color: #000;
+  }
+
+  .interest-field textarea {
+    resize: none;
+  }
+
+  .interest-submit {
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    background: #000;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .interest-submit:hover {
+    background: #333;
+  }
+
+  .interest-success {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 8px;
+    text-align: center;
+    color: #16a34a;
+  }
+
+  .interest-success span {
+    font-size: 14px;
+  }
+
+  /* Mobile positioning */
+  @media (max-width: 640px) {
+    .interest-popover {
+      position: fixed;
+      left: 16px;
+      right: 16px;
+      top: auto;
+      bottom: 16px;
+      transform: translateY(16px);
+      width: auto;
+    }
+
+    .interest-popover.open {
+      transform: translateY(0);
+    }
+
+    .interest-popover-arrow {
+      display: none;
+    }
+  }
+</style>

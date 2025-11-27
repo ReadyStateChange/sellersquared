@@ -59,3 +59,48 @@
   --astro-code-token-punctuation: #ffffff;
   --astro-code-token-link: #ffffff;
 }
+
+/* Interest Form Component - hidden by default */
+.interest-form-wrapper .interest-form-container,
+span.interest-form-container,
+[data-container-for] {
+  display: none !important;
+  opacity: 0;
+}
+
+.interest-form-wrapper .interest-form-container.is-open,
+span.interest-form-container.is-open,
+[data-container-for].is-open {
+  display: inline !important;
+  opacity: 1;
+}
+
+.interest-form-wrapper .interest-form-success,
+span.interest-form-success,
+[data-success-for] {
+  display: none !important;
+}
+
+/* Responsive: stack form fields on narrow screens */
+@media (max-width: 640px) {
+  .interest-form-inner {
+    display: flex;
+    flex-direction: column;
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+
+  .interest-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .interest-form label {
+    width: 100%;
+  }
+
+  .interest-form input,
+  .interest-form textarea {
+    width: 100%;
+  }
+}
