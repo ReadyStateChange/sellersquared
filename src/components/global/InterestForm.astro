@@ -185,14 +185,11 @@ const {
       const data = Object.fromEntries(formData);
 
       try {
-        const res = await fetch(
-          "https://your-railway-app.up.railway.app/submit",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-          }
-        );
+        const res = await fetch("https://contact.sellersquared.com/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
 
         if (!res.ok) throw new Error("Failed to submit");
 
