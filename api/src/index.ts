@@ -50,17 +50,39 @@ const server = Bun.serve({
       });
     }
 
+    // Simple config check (no SMTP connection)
+    if (url.pathname === "/debug/config") {
+      const gmailUser = process.env.GMAIL_USER;
+      const gmailPass = process.env.GMAIL_APP_PASSWORD;
+      return Response.json({
+        status: "ok",
+        gmail: {
+          user: gmailUser
+            ? `${gmailUser.slice(0, 3)}***@${gmailUser.split("@")[1] || "?"}`
+            : "NOT SET",
+          pass: gmailPass ? `SET (${gmailPass.length} chars)` : "NOT SET",
+        },
+        env: process.env.NODE_ENV || "not set",
+        timestamp: new Date().toISOString(),
+      });
+    }
+
     // Debug endpoint - check email config without sending
     if (url.pathname === "/debug/email" && req.method === "GET") {
+      console.log("[Debug] /debug/email called");
       try {
         const result = await verifyTransporter();
+        console.log("[Debug] verifyTransporter result:", result);
         return Response.json({
-          status: "ok",
-          message: "SMTP connection verified",
+          status: result.verified ? "ok" : "config_error",
+          message: result.verified
+            ? "SMTP connection verified"
+            : "Configuration issue",
           ...result,
         });
       } catch (err) {
         const e = err as any;
+        console.error("[Debug] verifyTransporter error:", e);
         return Response.json(
           {
             status: "error",
