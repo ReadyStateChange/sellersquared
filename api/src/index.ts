@@ -1,4 +1,4 @@
-import { GmailService } from "./email/gmail";
+import { GmailService, verifyTransporter } from "./email/gmail";
 
 // Simple in-memory rate limiting
 const rateLimitMap = new Map<string, number[]>();
@@ -41,15 +41,47 @@ const server = Bun.serve({
 
     // Health check
     if (url.pathname === "/health") {
-      return Response.json({ status: "ok" });
+      return Response.json({
+        status: "ok",
+        gmailConfigured: !!(
+          process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD
+        ),
+        timestamp: new Date().toISOString(),
+      });
     }
 
-    // Form submission endpoint
+    // Debug endpoint - check email config without sending
+    if (url.pathname === "/debug/email" && req.method === "GET") {
+      try {
+        const result = await verifyTransporter();
+        return Response.json({
+          status: "ok",
+          message: "SMTP connection verified",
+          ...result,
+        });
+      } catch (err) {
+        const e = err as any;
+        return Response.json(
+          {
+            status: "error",
+            errorName: e?.name,
+            errorMessage: e?.message,
+            errorCode: e?.code,
+          },
+          { status: 500 }
+        );
+      }
+    }
+
+    // Form submission endpoint - accepts quickly, sends email async
     if (url.pathname === "/submit" && req.method === "POST") {
-      const ip =
-        req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+      const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+      const requestId = crypto.randomUUID().slice(0, 8);
+
+      console.log(`[${requestId}] POST /submit from ${ip}`);
 
       if (isRateLimited(ip)) {
+        console.log(`[${requestId}] Rate limited`);
         return Response.json(
           { error: "Too many requests" },
           { status: 429, headers: corsHeaders(origin) }
@@ -57,19 +89,36 @@ const server = Bun.serve({
       }
 
       try {
-        const body = await req.json();
+        const body = (await req.json()) as {
+          name?: string;
+          email?: string;
+          message?: string;
+        };
         const { name, email, message } = body;
+
+        console.log(`[${requestId}] Received:`, {
+          name,
+          email: email?.slice(0, 5) + "***",
+        });
 
         // Validation
         if (!name || !email) {
+          console.log(
+            `[${requestId}] Validation failed: missing name or email`
+          );
           return Response.json(
             { error: "Name and email required" },
             { status: 400, headers: corsHeaders(origin) }
           );
         }
 
-        // Send notification email
-        await GmailService.send({
+        // Fire-and-forget: send email in background, respond immediately
+        console.log(
+          `[${requestId}] Queuing email, returning success immediately`
+        );
+
+        // Don't await - let it run in background
+        GmailService.send({
           to: process.env.GMAIL_USER!,
           subject: `[SellerSquared] Interest from ${name}`,
           text: `Name: ${name}\nEmail: ${email}\nMessage: ${message || "N/A"}`,
@@ -79,14 +128,18 @@ const server = Bun.serve({
             <p><strong>Email:</strong> ${email}</p>
             <p><strong>Message:</strong> ${message || "N/A"}</p>
           `,
-        });
+        })
+          .then(() => console.log(`[${requestId}] Email sent successfully`))
+          .catch((err) =>
+            console.error(`[${requestId}] Email send FAILED:`, err)
+          );
 
         return Response.json(
-          { success: true },
+          { success: true, requestId },
           { headers: corsHeaders(origin) }
         );
       } catch (err) {
-        console.error("Submit error:", err);
+        console.error(`[${requestId}] Parse error:`, err);
         return Response.json(
           { error: "Failed to process request" },
           { status: 500, headers: corsHeaders(origin) }
